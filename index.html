@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Muzic62 Player</title>
+    <title>Muzic62</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #121212;
-            --card-bg: #181818;
-            --card-hover: #282828;
-            --accent-color: #1db954;
+            --bg-base: #121212;
+            --bg-card: #181818;
+            --bg-card-hover: #282828;
+            --accent: #1db954;
             --text-main: #ffffff;
             --text-sub: #b3b3b3;
         }
@@ -21,11 +21,11 @@
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
+            background-color: var(--bg-base);
             color: var(--text-main);
             height: 100vh;
             display: flex;
@@ -33,329 +33,67 @@
             overflow: hidden;
         }
 
-        .header {
-            padding: 20px 16px 12px 16px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        /* Главный экран */
+        .app-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 16px 140px 16px;
         }
 
-        .header h1 {
-            font-size: 22px;
+        .greeting {
+            font-size: 24px;
             font-weight: 700;
+            margin-bottom: 16px;
             letter-spacing: -0.5px;
         }
 
-        .track-list {
-            flex: 1;
-            overflow-y: auto;
-            padding: 0 16px 140px 16px;
+        /* Быстрые карточки сверху (как в Spotify) */
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 24px;
         }
 
-        .track-card {
+        .quick-card {
             display: flex;
             align-items: center;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            background-color: var(--card-bg);
-            transition: background-color 0.2s ease;
-            cursor: pointer;
-        }
-
-        .track-card:active {
-            background-color: var(--card-hover);
-        }
-
-        .track-card.active {
-            background-color: #2b2b2b;
-            border-left: 4px solid var(--accent-color);
-        }
-
-        .track-cover {
-            width: 48px;
-            height: 48px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 6px;
-            background-color: #282828;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            margin-right: 12px;
-        }
-
-        .track-info {
-            flex: 1;
             overflow: hidden;
+            cursor: pointer;
+            transition: background 0.2s;
         }
 
-        .track-title {
-            font-size: 15px;
-            font-weight: 600;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .quick-card:active {
+            background: rgba(255, 255, 255, 0.2);
         }
 
-        .track-artist {
+        .quick-card img {
+            width: 56px;
+            height: 56px;
+            object-fit: cover;
+        }
+
+        .quick-card span {
             font-size: 13px;
-            color: var(--text-sub);
-            margin-top: 2px;
+            font-weight: 600;
+            padding: 0 10px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        .player-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: #212121;
-            border-top: 1px solid #282828;
-            padding: 12px 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            box-shadow: 0 -4px 12px rgba(0,0,0,0.5);
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.3px;
         }
 
-        .player-main {
+        /* Список треков */
+        .track-item {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-        }
-
-        .now-playing {
-            display: flex;
-            align-items: center;
-            flex: 1;
-            overflow: hidden;
-        }
-
-        .controls {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        .btn-control {
-            background: none;
-            border: none;
-            cursor: pointer;
-            fill: var(--text-sub);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-control:hover {
-            fill: var(--text-main);
-        }
-
-        .btn-play {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background-color: var(--text-main);
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.1s ease;
-        }
-
-        .btn-play:active {
-            transform: scale(0.95);
-        }
-
-        .btn-play svg {
-            fill: #000;
-            width: 18px;
-            height: 18px;
-        }
-
-        .progress-container {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .time {
-            font-size: 11px;
-            color: var(--text-sub);
-            width: 35px;
-            text-align: center;
-        }
-
-        .progress-bar {
-            flex: 1;
-            height: 4px;
-            background-color: #535353;
-            border-radius: 2px;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background-color: var(--accent-color);
-            border-radius: 2px;
-            transition: width 0.1s linear;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="header">
-        <h1>Muzic62</h1>
-    </div>
-
-    <div class="track-list" id="trackList"></div>
-
-    <div class="player-bar">
-        <div class="player-main">
-            <div class="now-playing">
-                <div class="track-info">
-                    <div class="track-title" id="nowTitle">Выберите трек</div>
-                    <div class="track-artist" id="nowArtist">Muzic62 Studio</div>
-                </div>
-            </div>
-            <div class="controls">
-                <button class="btn-control" id="prevBtn" title="Назад">
-                    <svg width="24" height="24" viewBox="0 0 24 24"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
-                </button>
-                <button class="btn-play" id="playBtn" title="Играть">
-                    <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-                </button>
-                <button class="btn-control" id="nextBtn" title="Вперед">
-                    <svg width="24" height="24" viewBox="0 0 24 24"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-                </button>
-            </div>
-        </div>
-        <div class="progress-container">
-            <span class="time" id="currentTime">0:00</span>
-            <div class="progress-bar" id="progressBar">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
-            <span class="time" id="durationTime">0:00</span>
-        </div>
-    </div>
-
-    <script>
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
-        }
-
-        const tracks = [
-            { title: "Ночной вайб (Remix)", artist: "D'Moné & Memorist", duration: "2:45", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-            { title: "New School Flow", artist: "Muzic62", duration: "3:10", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
-            { title: "Cyber Sunset", artist: "Memorist", duration: "2:55", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
-        ];
-
-        let currentTrackIndex = 0;
-        let isPlaying = false;
-        const audioElement = new Audio();
-
-        const trackListEl = document.getElementById('trackList');
-        const playBtn = document.getElementById('playBtn');
-        const playIcon = document.getElementById('playIcon');
-        const nowTitle = document.getElementById('nowTitle');
-        const nowArtist = document.getElementById('nowArtist');
-        const progressFill = document.getElementById('progressFill');
-        const progressBar = document.getElementById('progressBar');
-        const currentTimeEl = document.getElementById('currentTime');
-        const durationTimeEl = document.getElementById('durationTime');
-
-        function renderTracks() {
-            trackListEl.innerHTML = '';
-            tracks.forEach((track, index) => {
-                const card = document.createElement('div');
-                card.className = `track-card ${index === currentTrackIndex ? 'active' : ''}`;
-                card.innerHTML = `
-                    <div class="track-cover">🎵</div>
-                    <div class="track-info">
-                        <div class="track-title">${track.title}</div>
-                        <div class="track-artist">${track.artist}</div>
-                    </div>
-                `;
-                card.onclick = () => {
-                    loadTrack(index);
-                    playTrack();
-                };
-                trackListEl.appendChild(card);
-            });
-        }
-
-        function loadTrack(index) {
-            currentTrackIndex = index;
-            audioElement.src = tracks[index].audio;
-            nowTitle.textContent = tracks[index].title;
-            nowArtist.textContent = tracks[index].artist;
-            renderTracks();
-        }
-
-        function playTrack() {
-            audioElement.play().then(() => {
-                isPlaying = true;
-                playIcon.innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
-            }).catch(e => console.log("Autoplay blocked:", e));
-        }
-
-        function pauseTrack() {
-            audioElement.pause();
-            isPlaying = false;
-            playIcon.innerHTML = '<path d="M8 5v14l11-7z"/>';
-        }
-
-        playBtn.onclick = () => {
-            if (isPlaying) {
-                pauseTrack();
-            } else {
-                playTrack();
-            }
-        };
-
-        document.getElementById('nextBtn').onclick = () => {
-            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
-            loadTrack(currentTrackIndex);
-            playTrack();
-        };
-
-        document.getElementById('prevBtn').onclick = () => {
-            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
-            loadTrack(currentTrackIndex);
-            playTrack();
-        };
-
-        audioElement.ontimeupdate = () => {
-            if (audioElement.duration) {
-                const progress = (audioElement.currentTime / audioElement.duration) * 100;
-                progressFill.style.width = progress + '%';
-                currentTimeEl.textContent = formatTime(audioElement.currentTime);
-                durationTimeEl.textContent = formatTime(audioElement.duration);
-            }
-        };
-
-        audioElement.onended = () => {
-            document.getElementById('nextBtn').click();
-        };
-
-        progressBar.onclick = (e) => {
-            const width = progressBar.clientWidth;
-            const clickX = e.offsetX;
-            audioElement.currentTime = (clickX / width) * audioElement.duration;
-        };
-
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        }
-
-        loadTrack(0);
-    </script>
-</body>
-</html>
+            padding: 8px;
+            border-radius: 6px;
