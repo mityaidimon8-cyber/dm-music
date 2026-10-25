@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Muzic62 Hi-Fi</title>
+    <title>Muzic62 VK Edition</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -33,7 +33,6 @@
             overflow: hidden;
         }
 
-        /* Основные вкладки */
         .tab-content {
             flex: 1;
             overflow-y: auto;
@@ -52,7 +51,6 @@
             letter-spacing: -0.5px;
         }
 
-        /* Сетка быстрого доступа */
         .quick-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -91,7 +89,6 @@
             margin-bottom: 12px;
         }
 
-        /* Список треков */
         .track-item {
             display: flex;
             align-items: center;
@@ -137,9 +134,9 @@
             gap: 6px;
         }
 
-        .hifi-badge {
-            background: rgba(29, 185, 84, 0.2);
-            color: var(--accent);
+        .vk-badge {
+            background: rgba(0, 119, 255, 0.2);
+            color: #4a90e2;
             font-size: 10px;
             padding: 1px 4px;
             border-radius: 3px;
@@ -204,199 +201,4 @@
             cursor: pointer;
             fill: #fff;
             display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .play-circle {
-            width: 32px;
-            height: 32px;
-            background: #fff;
-            border-radius: 50%;
-            fill: #000;
-        }
-
-        /* Полноэкранный плеер */
-        .full-player {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(180deg, #333 0%, #121212 100%);
-            z-index: 200;
-            display: flex;
-            flex-direction: column;
-            padding: 24px;
-            transform: translateY(100%);
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .full-player.open {
-            transform: translateY(0);
-        }
-
-        .fp-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .fp-art {
-            width: 100%;
-            aspect-ratio: 1;
-            border-radius: 8px;
-            object-fit: cover;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            margin-bottom: 30px;
-        }
-
-        .fp-info {
-            margin-bottom: 20px;
-        }
-
-        .fp-title {
-            font-size: 22px;
-            font-weight: 700;
-        }
-
-        .fp-artist {
-            font-size: 16px;
-            color: var(--text-sub);
-            margin-top: 4px;
-        }
-
-        .progress-container {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: #535353;
-            border-radius: 2px;
-            position: relative;
-            cursor: pointer;
-        }
-
-        .progress-fill {
-            height: 100%;
-            width: 0%;
-            background: var(--text-main);
-            border-radius: 2px;
-        }
-
-        .time-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: var(--text-sub);
-            margin-top: 6px;
-        }
-
-        .fp-controls {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        /* Эквалайзер */
-        .eq-container {
-            background: rgba(0,0,0,0.3);
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: auto;
-            margin-bottom: 20px;
-        }
-
-        .eq-title {
-            font-size: 12px;
-            color: var(--text-sub);
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .eq-sliders {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .eq-col {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .eq-col input[type=range] {
-            writing-mode: vertical-lr;
-            direction: rtl;
-            width: 20px;
-            height: 60px;
-            accent-color: var(--accent);
-        }
-
-        .eq-col span {
-            font-size: 10px;
-            color: var(--text-sub);
-        }
-
-        /* Нижняя навигация */
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 56px;
-            background-color: #181818;
-            border-top: 1px solid #282828;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            z-index: 100;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
-            color: var(--text-sub);
-            cursor: pointer;
-            font-size: 10px;
-            gap: 4px;
-        }
-
-        .nav-item.active {
-            color: var(--text-main);
-        }
-
-        .nav-item svg {
-            width: 24px;
-            height: 24px;
-            fill: currentColor;
-        }
-    </style>
-</head>
-<body>
-
-    <!-- Главная вкладка -->
-    <div id="tab-home" class="tab-content active">
-        <div class="greeting">Добрый вечер</div>
-        <div class="quick-grid">
-            <div class="quick-card" onclick="openVkImportModal()">
-                <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=150" alt="VK">
-                <span>Импорт из ВК</span>
-            </div>
-            <div class="quick-card" onclick="playTrack(0)">
-                <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=150" alt="Hi-Fi">
-                <span>Hi-Fi Хиты</span>
-            </div>
-        </div>
-        <div class="section-title">Рекомендации без цензуры</div>
-        <div id="trackList
+            align-
