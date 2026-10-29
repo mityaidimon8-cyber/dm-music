@@ -180,7 +180,15 @@ def vk_my_audio():
     if not token:
         return jsonify({"error": "Сначала подключи аккаунт ВК."}), 401
     try:
-        result = vk_api("audio.get", token, {"count": 100, "offset": 0})
+        try:
+            offset = max(0, min(int(request.args.get("offset", "0")), 1000000))
+        except ValueError:
+            offset = 0
+        try:
+            count = max(1, min(int(request.args.get("count", "100")), 100))
+        except ValueError:
+            count = 100
+        result = vk_api("audio.get", token, {"count": count, "offset": offset})
         items = result.get("items", []) if isinstance(result, dict) else (result or [])
         return jsonify({"items": [{
             "id": item.get("id"), "owner_id": item.get("owner_id"),
